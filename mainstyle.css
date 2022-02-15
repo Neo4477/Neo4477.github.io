@@ -1,0 +1,417 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,700&display=swap');
+
+body{
+    background-color: hsl(225, 25%, 97%);
+    font-family: "Roboto";
+}
+
+/*Preloader*/
+.preloader{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    background-color: white;
+    top: 0;
+    left: 0;
+    text-align: center;
+}
+
+.preload{
+    position: relative;
+    top: 35%;
+}
+
+.hide-preload{
+    display: none;
+}
+
+/*header point-rounds*/
+.round-points{
+    text-align: center;
+}
+
+.points-rounds-reached{
+    font-size: 2rem;
+    color: rgb(237, 52, 83);
+    display: inline;
+    margin: 0 auto;
+    font-weight: 500;
+    position: relative;
+    top: 5vh;
+    right: 25px;
+}
+
+/*point count*/
+.game-points{
+    position: relative;
+    top: 12vh;
+    display: flex;
+    width: 60%;
+    margin: 0 auto;
+    justify-content: space-between;
+    list-style: none;
+}
+
+.positioning-points{
+    font-size: 1.5rem;
+    color:hsl(209, 28%, 39%);
+}
+
+.positioning-points p{
+    font-size: 3rem;
+    font-weight: 300;
+    position: relative;
+    bottom: 40px;
+}
+
+.ti{
+    position: relative;
+    left: 15px;
+}
+
+.wins{
+    color: #00ff00;
+}
+
+.ties{
+    color: rgb(190, 154, 32);
+    position: relative;
+}
+
+.loses{
+    color: rgb(255, 0, 0);
+}
+
+/*game live animation*/
+.game-demonstration{
+    width: 80%;
+    justify-content: space-between;
+    margin: 0 auto;
+    display: flex;
+    position: relative;
+    top: 45px;
+}
+
+.platform{
+    width: 33%;
+    min-width: 150px;
+    height: 60vh;
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    min-height: 200px;
+    overflow: hidden;
+}
+
+.user-platform{
+    background-color: #00ff00;
+    
+}
+
+.user-won{
+    border: 5px solid rgb(255, 255, 0);
+}
+
+.computer-platform{
+    background-color: rgb(255, 0, 0);
+}
+
+.title{
+    font-size: 2rem;
+    position: relative;
+    bottom: 30px;
+    color: hsl(209, 28%, 39%);
+    font-weight: 500;
+}
+
+.name{
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    position: relative;
+    top: 20px;
+    font-weight: 500;
+}
+
+.rottate{
+    transform: scale(-1,1);
+}
+
+
+.userss, .computers  {
+    background: transparent;
+    border: none;
+    color: white;
+    position: absolute;
+    display: inline;
+    margin-left: 14%;
+    margin-right: 14%;
+    top: 50%;
+    visibility: hidden;
+    transition: 1s;
+}
+
+.show-choicess{
+    visibility: visible;
+    transform: scale(3);
+}
+
+
+
+
+/*game user/computer choice*/
+/*user*/
+.scissors{
+    transform: scale(-1,1);
+}
+
+.rot{
+    transform: rotate(90deg);
+}
+
+.user-choice{
+    position: relative;
+    top: 60px;
+    width: 25%;
+    display: flex;
+    justify-content: space-evenly;
+    left: 10%;
+    
+}
+
+.user-choice button{
+    background-color: #00ff00;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: 0.75s;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.scissors:hover{
+    transform: scale(-1.4,1.4);
+}
+
+.rock:hover{
+    transform: scale(1.4);
+}
+
+.paper:hover{
+    transform: scale(1.4);
+}
+/*game history*/
+.game-histroy{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 60vh;
+    overflow: hidden;
+    width: 34%;
+    text-align: center;
+    justify-content: start;
+}
+
+.previus-games{
+    position: relative;
+    text-align: center;
+}
+
+.game{
+    display: flex;
+    position: relative;
+    margin: 0 auto;
+    bottom: 10vh;
+    border-bottom: 2px hsl(209, 28%, 39%) solid;
+}
+
+.round-number{
+    font-size: 2rem;
+    color: hsl(209, 28%, 39%);
+}
+
+.p{
+    background: transparent;
+    border: none;
+    margin-left: 0.8vw;
+    margin-right: 0.8vw;
+}
+
+.computer-history{
+    color: red;
+}
+
+.user-history{
+    color: #00ff00;
+}
+
+/*computer*/
+.computer-choice{
+    position: relative;
+    width: 25%;
+    display: flex;
+    justify-content: space-evenly;
+    right: 10%;
+    float: right;
+    margin-bottom: 100px;
+}
+
+.rott{
+    transform: rotate(-90deg);
+}
+
+.computer-choice button{
+    background-color: rgb(255, 0, 0);
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    border: none;
+    transition: 0.75s;
+    margin-left: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+/*for both*/
+.unvisibility{
+    color: transparent;
+}
+
+/*endGame*/
+.endgame{
+    width: 90vw;
+    height: 90vh;
+    position: fixed;
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    top: 5vh;
+    left: 5vw;
+    color: rgb(237, 52, 83);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.outcame{
+    font-style: italic;
+    font-size: 4rem;
+    font-weight: 700;
+}
+
+.try{
+    font-size: 2rem;
+    font-style: italic;
+    position: relative;
+    bottom: 5vh;
+}
+
+.buttonsss button{
+    background: transparent;
+    border-radius: 0.5rem;
+    background-color: rgb(237, 52, 83);
+    border: none;
+    color: white;
+    transform: scale(1.5);
+    margin-left: 5vw;
+    margin-right: 5vw;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: 0.75s;
+}
+
+.buttonsss button a{
+    text-decoration: none;
+    color: white;
+}
+
+.none{
+    display: none;
+}
+
+.buttonsss button:hover{
+    transform: scale(1.7);
+}
+
+
+/*media queris*/
+@media(max-width:1000px){
+    .game-histroy{
+        display: none;
+    }
+
+    .platform{
+        width: 40%;
+        height: 45vh;
+    }
+
+    .buttonsss button{
+        transform: scale(1.2);
+    }
+
+    .buttonsss button:hover{
+        transform: scale(1.4);
+    }
+
+}
+
+@media (max-width:700px) {
+    .platform{
+        width: 45%;
+        height: 35vh;
+    }
+    .game-points{
+        width: 75%;
+    }
+    .round-points{
+        transform: scale(0.9);
+    }
+
+    .game-demonstration{
+        width: 90%;
+    }
+    .name{
+        font-size: 1.60rem;
+    }
+
+    .show-choicess{
+        transform: scale(2);
+    }
+}
+
+@media (max-width:600px) {
+    .computer-choice{
+        display: none;
+    }
+
+    .user-choice{
+        width: 80%;
+    }
+
+    .outcame{
+        font-style: italic;
+        font-size: 2.5rem;
+    }
+    
+    .try{
+        font-size: 1.5rem;
+        font-style: italic;
+        position: relative;
+        bottom: 5vh;
+    }
+    
+}
+
+@media (max-width:450px) {
+    .game-points{
+        width: 90%;
+    }
+
+    .round-points{
+        transform: scale(0.8);
+    }
+}
