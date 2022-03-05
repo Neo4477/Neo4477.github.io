@@ -17,12 +17,12 @@ function secondSubmit(){
     var player1=document.querySelector(".player1")
     var player2=document.querySelector(".player2")
     if(!player1.value&&!player2.value){
-        noInput(".player1",".firstPlayer","first player's name")
-        noInput(".player2",".secondPlayer","second player's name")
+        noInput(".player1",".firstPlayer","first players name")
+        noInput(".player2",".secondPlayer","second players name")
     }else if(!player1.value){
-        noInput(".player1",".firstPlayer","first player's name")
+        noInput(".player1",".firstPlayer","first players name")
     }else if(!player2.value){
-        noInput(".player2",".secondPlayer","second player's name")
+        noInput(".player2",".secondPlayer","second players name")
     }else{
         localStorage.setItem("type", "friends");
         localStorage.setItem("player1", player1.value)

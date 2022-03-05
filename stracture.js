@@ -46,8 +46,8 @@ let player2O="o"
 if(gameType==="friends"){
     window.addEventListener("load",function(){
         //add names
-        player1.textContent=`${localStorage.getItem("player1")}'s turn`
-        player2.textContent=`${localStorage.getItem("player2")}'s turn`
+        player1.textContent=`${localStorage.getItem("player1")}s turn`
+        player2.textContent=`${localStorage.getItem("player2")}s turn`
         //change turns
         addTurn()
 
