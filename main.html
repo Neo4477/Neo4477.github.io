@@ -3,74 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="data kakabadze">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rock-paper-scissor</title>
+    <title>tic-tac-toe</title>
     <link rel="stylesheet" href="mainstyle.css">
-    <script src="app1.js" defer></script>
+    <script src="stracture.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <header>
-        <div class="preloader hide-preload">
-            <img src="1488.gif" alt="loader" class="preload">
-        </div>
-        <div class="round-points">
-            <h2 class="points-rounds-reached"></h2>
-            <div class="game-points ">
-                <div class="positioning-points">
-                    <li class="user"></li>
-                    <p class="user-points wins"></p>
-                </div>
-                <div class="positioning-points ti">
-                    <li class="drwa-amount">TIES </li>
-                    <p  class="draw-amount ties"></p>
-                </div>
-                <div class="positioning-points">
-                    <li class="computer-points">COMPUTER</li>
-                    <p class="comp-points loses"></p>
-                </div>
-            </div>
+    <header class="header">
+        <h1 class="header-title">TIC TAC TOE</h1>
+        <div class="turns">
+            <p class="turn-1"></p>
+            <p class="turn-2"></p>
         </div>
     </header>
-    <main>
-        <section class="game-demonstration">
-            <div class="user-platform platform">
-                <h2 class="name users"></h2>
-                <button type="button" class="user-choice-scissor userss"><i class="fa-regular fa-hand-scissors fa-3x rottate"></i></button>
-                <button type="button" class="user-choice-rock userss"><i class="fa-regular fa-hand-back-fist rot fa-3x"></i></button>
-                <button type="button" class="user-choice-paper userss"><i class="fa-regular fa-hand  rot fa-3x"></i></button>
-            </div>
-            <div class="game-histroy">
-                <h4 class="title"></h4>
-                <div class="previus-games">
-                </div>
-            </div>
-            <div class="computer-platform platform ">
-                <h2 class="name">COMPUTER</h2>
-                <button type="button" class="computer-platform-scissor computers"><i class="fa-regular fa-hand-scissors fa-3x"></i></button>
-                <button type="button" class="computer-platform-rock computers"><i class="fa-regular fa-hand-back-fist rott fa-3x"></i></button>
-                <button type="button" class="computer-platform-paper computers"><i class="fa-regular fa-hand rott fa-3x"></i></button>
-            </div>
+    <main class="main">
+        <section class="board">
+            <span class="squere top lef">
+                <div class="ceil"></div>
+            </span>
+            <span class="squere top">
+                <div class="ceil"></div>
+            </span>
+            <span class="squere top right">
+                <div class="ceil "></div>
+            </span>
+            <span class="squere lef">
+                <div class="ceil"></div>
+            </span>
+            <span class="squere ">
+                <div class="ceil "></div>
+            </span>
+            <span class="squere right">
+                <div class="ceil"></div>
+            </span>
+            <span class="squere bot lef">
+                <div class="ceil"></div>
+            </span>
+            <span class="squere bot">
+                <div class="ceil"></div>
+            </span>
+            <span class="squere bot right">
+                <div class="ceil"></div>
+            </span>
+            <div class="win-horizont"></div>
+            <div class="win-height"></div>
+            <div class="win-dig-right"></div>
+            <div class="win-dig-left "></div>
         </section>
-        <section class="game-part">
-            <div class="user-choice">
-                <button type="button" class="scissors choice"><i class="fa-regular fa-hand-scissors fa-3x us d"></i></button>
-                <button type="button" class="rock choice"><i class="fa-regular fa-hand-back-fist rot fa-3x ur d"></i></button>
-                <button type="button" class="paper choice"><i class="fa-regular fa-hand rot fa-3x up d"></i></button>
-            </div>
-            <div class="computer-choice">
-                <button type="button" class="computer-scissor"><i class="fa-regular fa-hand-scissors fa-3x cs d"></i></button>
-                <button type="button" class="computer-rock"><i class="fa-regular fa-hand-back-fist  fa-3x rott cr d" ></i></button>
-                <button type="button" class="computer-paper"><i class="fa-regular fa-hand  fa-3x rott cp d"></i></button>
-            </div>
-        </section>
-        <div class="test"></div>
-        <section class="endgame none">
-            <h2 class="outcame">CONGRATULATION YOU WON</h2>
-            <p class="try">do you want to try again?</p>
-            <div class="buttonsss">
-                <button type="button" class="refresh">Refresh</button>
-                <button type="button"><a href="index.html">Change Parameters</a></button>
+        <section class="win-lost-draw">
+            <h2 class="result-title"></h2>
+            <p class="result-p">Do you want to try again?</p>
+            <div class="buttons">
+                <button type="button" class="submit refresh">Refresh</button>
+                <button type="button" class="submit reset">Reset</button>
             </div>
         </section>
     </main>

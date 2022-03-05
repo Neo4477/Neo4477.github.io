@@ -3,41 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="you can have fun bu plaing rock paper siccor with compiuter">
     <meta name="author" content="data kakabadze">
-    <meta name="keywords" content="rock paper scissor, games, ock paper scissor, rck paper scissor, rock pap scissor">
-    <title>rock-paper-scissor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tic-tac-toe</title>
     <link rel="stylesheet" href="style.css">
     <script src="app.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <header class="header">
-        <h1 class="headline">Rock Paper Scissors</h1>
-        <div class="form-class">
-            <form action="main.html" target="_top" class="form" method="get">
-                <div class="form-type">
-                    <label for="Name">Put your name</label>
-                    <input type="text" id="Name" name="name" class="name form-inputs" required="required">
-                </div>
-                <div class="form-type">   
-                    <label for="Type">Wich type do you want to play</label>
-                    <select name="type" id="Type" class="form-inputs" required="required">
-                        <option value="Rounds">Rounds</option>
-                        <option value="Points">Points</option>
-                    </select>
-                </div>
-                <div class="form-type last-type">
-                    <label for="Number">Till how Many Rounds/Points</label>
-                    <input type="number" id="Number" name="number" class="number form-inputs" min="1" required="required">
-                </div>
-                <div class="buttons">
-                    <input type="submit" class="button" value="Submit" id="submit">
-                    <input type="button" class="button" id="skip" value="Skip">
-                </div>
-            </form>
-        </div>
+        <h1 class="title">TIC TAC TOE</h1>
     </header>
+    <main class="user-option">
+        <div class="options">
+            <div class="first option">
+                <div class="icons">
+                    <h2 class="option-title">Against computer</h2>
+                    <i class="fa-solid fa-desktop"></i>
+                </div>  
+                <form action="" class="computer">
+                    <div>
+                        <label class="username firstUser" for="Username">Your name</label>
+                        <input type="text" name="user name" class="user-name firstInput" id="Username" required maxlength="5">
+                    </div>
+                   <!-- <div class="flexbox">
+                        <label for="start" class="username">who starts first</label>
+                        <select name="cars" id="start" class="start">
+                            <option value="you">you</option>
+                            <option value="computer">computer</option>
+                        </select>
+                    </div>-->
+                </form>
+                <button type="button" class="submit first-submit">Submit</button>
+            </div>
+            <div class="second option">
+                <div class="icons">
+                    <h2 class="option-title">Against friend</h2>
+                    <i class="fa-solid fa-user-group"></i>
+                </div>
+                <form action="" class="friend">
+                    <div>
+                        <label class="username firstPlayer" for="Username-player-1">Player 1 name</label>
+                    <input type="text" name="user name" class="user-name player1" id="Username-player-1" required maxlength="10">
+                    </div>
+                    <div>
+                        <label class="username secondPlayer" for="Username-player-2">Player 2 name</label>
+                        <input type="text" name="user name" class="user-name player2" id="Username-player-2" required maxlength="10">
+                    </div>
+                </form>
+               <button type="button" class="submit second-submit">Submit</button>
+            </div>
+        </div>
+
+    </main>
+    
 </body>
 </html>
