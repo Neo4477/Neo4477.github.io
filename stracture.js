@@ -28,9 +28,11 @@ function changeTheme(){
         document.querySelector("body").style.background=" var(--second-main-pg-color)"
         document.documentElement.style.setProperty('--heighlate-blocks',"white");
         document.documentElement.style.setProperty('--number-color',"--heighlate-blocks");
+        document.querySelector(".sudokuComplited").style.backgroundColor="var(--second-main-pg-color)"
         nightButton.classList.add("hidden")
         sunButton.classList.remove("hidden")
     }else{
+        document.querySelector(".sudokuComplited").style.backgroundColor="var(--first-main-pg-color)"
         document.querySelector("body").style.background="var(--first-main-pg-color)"
         document.documentElement.style.setProperty('--heighlate-blocks',"#002F5F");
         document.documentElement.style.setProperty('--number-color',"white");
@@ -39,6 +41,7 @@ function changeTheme(){
 
 //theme buttons functionality
 nightButton.addEventListener('click',function(){
+    document.querySelector("body").style.background=" var(--second-main-pg-color)"
     document.querySelector("body").style.background="var(--second-main-pg-color)"
     nightButton.classList.add("hidden")
     sunButton.classList.remove("hidden")
@@ -47,6 +50,7 @@ nightButton.addEventListener('click',function(){
 })
 
 sunButton.addEventListener('click',function(){
+    document.querySelector(".sudokuComplited").style.backgroundColor="var(--first-main-pg-color)"
     document.querySelector("body").style.background="var(--first-main-pg-color)"
     document.documentElement.style.setProperty('--number-color',"white");
     sunButton.classList.add("hidden")
