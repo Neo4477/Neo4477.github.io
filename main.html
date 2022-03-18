@@ -3,61 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="author" content="data kakabadze">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>tic-tac-toe</title>
+    <meta name="author" content="data kakabadze">
+    <title>Sudoku</title>
     <link rel="stylesheet" href="mainstyle.css">
     <script src="stracture.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
     <header class="header">
-        <h1 class="header-title">TIC TAC TOE</h1>
-        <div class="turns">
-            <p class="turn-1"></p>
-            <p class="turn-2"></p>
-        </div>
+        <nav class="navbar">
+            <h2 class="page-title">Sudoku</h2>
+            <button class="icon-button night"><i class="fa-solid fa-moon icon"></i></button>
+            <button class="icon-button sun hidden"><i class="fa-solid fa-sun icon"></i></button>
+        </nav>
     </header>
-    <main class="main">
-        <section class="board">
-            <span class="squere top lef">
-                <div class="ceil"></div>
-            </span>
-            <span class="squere top">
-                <div class="ceil"></div>
-            </span>
-            <span class="squere top right">
-                <div class="ceil "></div>
-            </span>
-            <span class="squere lef">
-                <div class="ceil"></div>
-            </span>
-            <span class="squere ">
-                <div class="ceil "></div>
-            </span>
-            <span class="squere right">
-                <div class="ceil"></div>
-            </span>
-            <span class="squere bot lef">
-                <div class="ceil"></div>
-            </span>
-            <span class="squere bot">
-                <div class="ceil"></div>
-            </span>
-            <span class="squere bot right">
-                <div class="ceil"></div>
-            </span>
-            <div class="win-horizont"></div>
-            <div class="win-height"></div>
-            <div class="win-dig-right"></div>
-            <div class="win-dig-left "></div>
+    <main>
+        <section class="timer">
+            <p class="timer">TIME<span class="exact-time">00:00:00</span></p>
         </section>
-        <section class="win-lost-draw">
-            <h2 class="result-title"></h2>
-            <p class="result-p">Do you want to try again?</p>
-            <div class="buttons">
-                <button type="button" class="submit refresh">Refresh</button>
-                <button type="button" class="submit reset">Reset</button>
+        <section class="sudoku-board">
+            <div class="full-block first-block">
+                <div class="ceil-block "></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+            <div class="full-block">
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+                <div class="ceil-block"></div>
+            </div>
+        </section>
+        <section class="time-name-level-field">
+            <div class="flex-name-level">
+                <div class="field">
+                    <p class="name"></p>
+                </div>
+                <div class="field">
+                    <p class="levle"></p>
+                </div>
+            </div>
+            <div class="solved">
+                <p>Solve Sudoku</p>
+            </div>
+        </section>
+        <section class="functionality">
+            <div class="numbers num">1</div>
+            <div class="numbers num">2</div>
+            <div class="numbers num">3</div>
+            <div class="numbers num">4</div>
+            <div class="numbers num">5</div>
+            <div class="numbers num">6</div>
+            <div class="numbers num">7</div>
+            <div class="numbers num">8</div>
+            <div class="numbers num">9</div>
+            <div class="numbers x"><i class="fa-solid fa-x"></i></div>
+            <div class="numbers v"><i class="fa-solid fa-v"></i></div>
+            <div class="numbers refresh"><i class="fa-solid fa-arrow-rotate-right"></i></div>
+        </section>
+        <section class="sudokuComplited none">
+            <h2 class="winner">Congratulations you complited sudoku in <span class="exactTime">20:10:10</span></h2>
+            <p class="try">do you want to try again?</p> 
+            <div class="buttonsss">
+                <button type="button" class="refresh ref">Refresh</button>
+                <button type="button"><a href="index.html">restart</a></button>
             </div>
         </section>
     </main>
