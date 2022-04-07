@@ -130,12 +130,28 @@ body{
         width: 52.5vw;
         height: 52.5vw;
     }
+
+    .draw{
+        font-size: 7rem;
+    }
+
+    .win{
+        font-size: 7rem;
+    }
 }
 
 @media (max-width:1200px) and (min-width: 801px){
     .main-board{
         width: 60vw;
         height: 60vw;
+    }
+
+    .draw{
+        font-size: 5rem;
+    }
+
+    .win{
+        font-size: 5rem;
     }
 }
 
@@ -145,5 +161,13 @@ body{
         width: 80vw;
         height: 80vw;
         top: 20vw;
+    }
+
+    .draw{
+        font-size: 5rem;
+    }
+
+    .win{
+        font-size: 5rem;
     }
 }

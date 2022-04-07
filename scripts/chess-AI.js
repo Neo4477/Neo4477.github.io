@@ -116,9 +116,9 @@ function chessAi(){
 
 
         if(!checkMate&&!stalmate&&legalMove){
-            if(piscecount>15){
+            if(piscecount>10){
                 evall=minimax(3,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }else if(piscecount>8){
+            }else if(piscecount>5){
                 evall=minimax(4,-Infinity,+Infinity,true,piscesTracker["w"],"w")
             }else{
                 evall=minimax(5,-Infinity,+Infinity,true,piscesTracker["w"],"w")
@@ -238,9 +238,9 @@ function chessAi(){
             }
 
         if(!checkMate&&!stalmate&&legalMove&&!repetition){
-            if(piscecount>15){
+            if(piscecount>10){
                 evall=minimax(3,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }else if(piscecount>8){
+            }else if(piscecount>5){
                 evall=minimax(4,-Infinity,+Infinity,true,piscesTracker["w"],"w")
             }else{
                 evall=minimax(5,-Infinity,+Infinity,true,piscesTracker["w"],"w")
