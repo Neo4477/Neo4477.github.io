@@ -43,6 +43,7 @@ function chessAi(){
             let tempturn=turn
             var copyBoard=[...board]
             let tempiskingincheck=iskingincheck
+            let previuspositions=[...prevposition]
             legalMove=true
 
             if(pisce[1]=="p"){
@@ -102,20 +103,24 @@ function chessAi(){
                 evall=0
             }
 
+            addPosition()
+            if(repetition){
+                evall==0
+            }
+
              //check if move is illegal
             if(pisce[1]=="k"){
                 let legality=validQueenKing.every(elem=>{
                     return board[elem+moveindx]!=="wk"
                 })
                 if(!legality){
-                    console.log("dsadasda")
                     evall=100000000000000  
                     legalMove=false     
                 }
             }
 
 
-        if(!checkMate&&!stalmate&&legalMove){
+        if(!checkMate&&!stalmate&&legalMove&&!repetition){
             if(piscecount>10){
                 evall=minimax(3,-Infinity,+Infinity,true,piscesTracker["w"],"w")
             }else if(piscecount>5){
@@ -135,6 +140,8 @@ function chessAi(){
                 aipisctomoveindx=piscetomoveind
                 aimove=moveindx
             }
+
+            prevposition=previuspositions
             board=copyBoard
             piscesTracker[turn]=copypisces
             castle=temporarycastle
@@ -205,10 +212,6 @@ function chessAi(){
                 }
             }
             //change eval end
-            addPosition()
-            if(repetition){
-                evall==0
-            }
 
             let tempetempturn=turn
             turn=switchTurns[turn]
@@ -237,7 +240,7 @@ function chessAi(){
                 }
             }
 
-        if(!checkMate&&!stalmate&&legalMove&&!repetition){
+        if(!checkMate&&!stalmate&&legalMove){
             if(piscecount>10){
                 evall=minimax(3,-Infinity,+Infinity,true,piscesTracker["w"],"w")
             }else if(piscecount>5){

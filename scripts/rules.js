@@ -266,7 +266,7 @@ function addPosition(){
     }
     prevposition.push(valueToAdd)
 
-    if(prevposition.length==16){
+    if(prevposition.length==20){
         prevposition=[]
     }
 }
