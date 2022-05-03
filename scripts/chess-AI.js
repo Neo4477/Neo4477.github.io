@@ -1,50 +1,214 @@
+let capturedPisce=NaN;
+let isItRepetition3=0;
+let bestmovename;
+let variationAmount=0;
+let wining={
+    "w": 100000000,
+    "b": -100000000,
+}
 
+let infinitysforsides={
+    "w": -Infinity,
+    "b": Infinity,
+}
 
-let lastPickedPisce;
-let lastPickedMove;
-let boardevaluation;
-let evall;
-let legalMove=true;
+let finalDepth;
 
-
-function chessAi(){
-    let pisces=[...piscesTracker[turn]]
-    //potmoves
-    let finalEvaluationMove=+Infinity
-    let aipiscetomove;
-    let aipisctomoveindx;
-    let aimove;
-    //potcaptures
-    let finalEvaluationCapture=+Infinity
-    let aipiscetoCaptureWith;
-    let aipiscetoCaptureWithindx;
-    let aicapture;
-
-    let piscecount=piscesTracker["w"].length+piscesTracker["b"].length
-
-    pisces.forEach(piscetomoveind=>{
-        let pisce=board[piscetomoveind]
-        let copypisceTochangeValue=board[piscetomoveind]
-        turn="b"
-        checkTurn=new RegExp("^"+turn,"i")
-        if(iskingincheck){
-            validMovesAi(pisce,piscetomoveind)
-            uncheck(pisce,piscetomoveind)
-        }else{
-            validMovesAi(pisce,piscetomoveind)
+function chessAi(isItMinPlayer){
+    variationAmount=0
+    let eval;
+    //potmovePropertys
+    let potMoveMinEval=infinitysforsides[turn];
+    let bestPisceToMove;
+    let bestPisceToMoveindx;
+    let bestpotmove;
+    //potcapturepropertys
+    let potCaptureMinEval=infinitysforsides[turn]
+    let bestPisceToCaptureWith;
+    let bestPisceToCaptureWithindx;
+    let bestpotCapture;
+    let piscesinedxcopy=[...piscesTracker[turn]]
+    //piscount/movecount
+    let piscount=0
+    piscesTracker["w"].forEach(elem=>{
+        if(board[elem]!="wp"){
+            piscount++
         }
-        let copyPotMoves=[...potMoves]
-        let copyCaptures=[...potCaptures]
-        copyPotMoves.forEach(moveindx=>{
+    })
+    piscesTracker["b"].forEach(elem=>{
+        if(board[elem]!="bp"){
+            piscount++
+        }
+    })
+
+
+    addAttackedSqueres(turn)
+    let potentailmoves=rightAttackedSqueres[turn].length+rightAttackedPieces[turn].length
+    let potentialmovesForOpositside=rightAttackedSqueres[switchTurns[turn]].length+rightAttackedPieces[switchTurns[turn]].length
+    piscesinedxcopy.forEach(pisceindx=>{
+        let pisce=board[pisceindx]
+        let potunpassantcopyy=unpassantt
+        if(iskingincheck){
+            validMovesAi(pisce,pisceindx)
+            copyturn=turn
+            copycheckturn=checkTurn
+            uncheck(pisce,pisceindx)
+            checkTurn=copycheckturn
+        }else{
+            validMovesAi(pisce,pisceindx)
+            if(pisce[1]=="k"){
+                filtered=isKingMovesValid()
+                potMoves=filtered[0]
+                potCaptures=filtered[1]
+            }
+        }
+
+
+
+        //copy potcaptures potmoves
+        let potMovesCopy=[...potMoves]
+        let potCapturesCopy=[...potCaptures]
+        potMovesCopy.forEach(potmove=>{
+            //create copy evaluation
+            let wSideEvaluation=shortcutseval["w"]
+            let bSideEvaluation=shortcutseval["b"]
+            let piscecopy=board[pisceindx]
+            let potUnPassantcopy=unpassantt;
+
             let temporarycastle=Object.assign({},castle)
-            let piscetomovecopy=pisce
-            let temporaryevaluation=Object.assign({},shortcutseval)
-            var copypisces=[...piscesTracker[turn]]
-            let tempturn=turn
-            var copyBoard=[...board]
-            let tempiskingincheck=iskingincheck
-            let previuspositions=[...prevposition]
-            legalMove=true
+            let IsCastlePlayed=false;
+            let iskingincheckcopy=iskingincheck;
+            let potpromotioncopy=[...potPromotion]
+
+            //is it promotion
+            if(pisce[1]=="p"){
+                if(potPromotion.length>0){
+                    pisce=turn+"q"
+                    //add eval
+                    shortcutseval[turn]+=800
+                }
+            }
+
+            //castle
+            if(pisce[1]=="k"){
+                let isItCastle=potmove-pisceindx
+                if(isItCastle==2){
+                    castlecheck(files.file_8,files.file_6)
+                    IsCastlePlayed="r"
+                }else if(isItCastle==-2){
+                    castlecheck(files.file_1,files.file_4)
+                    IsCastlePlayed="l"
+                }   
+            }
+
+
+
+            playMove(pisce,pisceindx,potmove,false)
+            changeEvall(turn,pisce,pisceindx,potmove,NaN,piscecopy)
+
+
+            //set everything for next player
+            turn=switchTurns[turn]
+            checkTurn=new RegExp("^"+turn,"i")
+            //50move rule
+            let useminimax=true
+            fiftymove++
+            if(fiftymove==100){
+                eval=0
+                useminimax=false
+            }
+
+            //3move repetition
+            let tempprevposition=[...prevposition]
+            addPosition(prevposition)
+            checkFor3repetition()
+            if(isItRepetition3>=3){
+                eval=0
+                useminimax=false
+            }
+            //check if potential move is mate/stalemate
+            addAttackedSqueres(switchTurns[turn])
+            checkIfKingIsInCheck()
+            isitCheckmate(turn)
+
+            
+            if(checkMate){
+                eval=wining[switchTurns[turn]]
+            }else if(stalmate){
+                eval=0
+            }
+
+
+            if(!checkMate&&!stalmate&&useminimax){
+                if(piscount==2){
+                    finalDepth=7
+                    eval=minimax(7,-Infinity,Infinity,isItMinPlayer)
+                }else if(piscount==3&&potentailmoves<20&&potentialmovesForOpositside<20){
+                    finalDepth=6
+                    eval=minimax(6,-Infinity,Infinity,isItMinPlayer)
+                }else if(potentailmoves<14&&movecount>24&&potentialmovesForOpositside<14){
+                    finalDepth=6
+                    eval=minimax(6,-Infinity,Infinity,isItMinPlayer)
+                }else if(potentailmoves<20&&movecount>24&&potentialmovesForOpositside<20){
+                    finalDepth=5
+                    eval=minimax(5,-Infinity,Infinity,isItMinPlayer)
+                }else if(potentailmoves<30&&movecount>24&&potentialmovesForOpositside<30){
+                    finalDepth=4
+                    eval=minimax(4,-Infinity,Infinity,isItMinPlayer)
+                }else{
+                    finalDepth=3
+                    eval=minimax(3,-Infinity,Infinity,isItMinPlayer)
+                }
+            }
+            //reset previus positions
+            prevposition=tempprevposition
+            //reset fiftymovecount
+            fiftymove--
+            //reset everything 
+            turn=switchTurns[turn]
+            checkTurn=new RegExp("^"+turn,"i")
+
+
+            if(isItMinPlayer&&eval < potMoveMinEval){
+                potMoveMinEval=eval
+                bestPisceToMove=piscecopy
+                bestPisceToMoveindx=pisceindx
+                bestpotmove=potmove
+            }else if(!isItMinPlayer&&eval > potMoveMinEval){
+                potMoveMinEval=eval
+                bestPisceToMove=piscecopy
+                bestPisceToMoveindx=pisceindx
+                bestpotmove=potmove
+            }
+
+            undoMove(piscecopy,pisceindx,potmove,false,NaN,IsCastlePlayed)
+
+
+            
+            //refresh evalution
+            shortcutseval["w"]=wSideEvaluation
+            shortcutseval["b"]=bSideEvaluation
+
+            castle=temporarycastle
+            pisce=piscecopy
+            iskingincheck=iskingincheckcopy
+            unpassantt=potUnPassantcopy
+            potPromotion=potpromotioncopy
+    
+        })
+
+        //potential captures
+        potCapturesCopy.forEach(potcapture=>{
+            //create copy evaluation
+            let wSideEvaluation=shortcutseval["w"]
+            let bSideEvaluation=shortcutseval["b"]
+
+            let potUnPassantcopy=unpassantt;
+            let piscecopy=board[pisceindx]
+            let temporarycastle=Object.assign({},castle)
+            let iskingincheckcopy=iskingincheck;
+            let potpromotioncopy=[...potPromotion]
+            let tempprevposition=[...prevposition]
 
             if(pisce[1]=="p"){
                 if(potPromotion.length>0){
@@ -54,591 +218,490 @@ function chessAi(){
                 }
             }
 
-            if(pisce[1]=="k"){
-                let isItCastle=moveindx-piscetomoveind
-                if(isItCastle==2){
-                    castlecheck(files.file_8,files.file_6)
-                }else if(isItCastle==-2){
-                    castlecheck(files.file_1,files.file_4)
-                }   
+            
 
+            playMove(pisce,pisceindx,potcapture,true)
+            changeEvall(turn,pisce,pisceindx,potcapture,capturedPisce,piscecopy)
 
-            }
-
-            //change js board
-            board[piscetomoveind]=emptySquere
-            board[moveindx]=pisce
-            //change piscetrack
-            piscesTracker[turn].splice(piscesTracker[turn].indexOf(piscetomoveind),1)
-            piscesTracker[turn].push(moveindx)
-            //change evaluation start
-            if(pisce[1]=="k"){
-                shortcutseval[turn]-=shortcutskings[turn][isItMiddleGame][piscetomoveind]
-                shortcutseval[turn]+=shortcutskings[turn][isItMiddleGame][moveindx]
-            }else if(pisce[1]=="p"){
-                shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][piscetomoveind]
-                shortcutseval[turn]+=shortcutspawn[turn][isItMiddleGame][moveindx]
-            }else{
-                if(piscetomovecopy[1]=="p"){
-                    shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][piscetomoveind]
-                }else{
-                    shortcutseval[turn]-=shortcuts[turn][pisce][piscetomoveind]
-                }
-                shortcutseval[turn]+=shortcuts[turn][pisce][moveindx]
-            }
-            //end
-            let tempetempturn=turn
+            
+            //set everything for next player
             turn=switchTurns[turn]
             checkTurn=new RegExp("^"+turn,"i")
-            addAttackedSqueres("b")
-            checkIfKingIsInCheck()
-            isitCheckmate("w")
-            turn=tempetempturn
-            iskingincheck=tempiskingincheck
-            checkTurn=new RegExp("^"+turn,"i")
+            let tempcapturedpisce=capturedPisce
 
-            if(checkMate){
-                evall=-1000000000000
-            }else if(stalmate){
-                evall=0
-            }
+             //check if potential move is mate/stalemate
+             addAttackedSqueres(switchTurns[turn])
+             checkIfKingIsInCheck()
+             isitCheckmate(turn)
+             if(checkMate){
+                 eval=wining[switchTurns[turn]]
+             }else if(stalmate){
+                 eval=0
+             }
 
-            addPosition()
-            if(repetition){
-                evall==0
-            }
-
-             //check if move is illegal
-            if(pisce[1]=="k"){
-                let legality=validQueenKing.every(elem=>{
-                    return board[elem+moveindx]!=="wk"
-                })
-                if(!legality){
-                    evall=100000000000000  
-                    legalMove=false     
-                }
-            }
-
-
-        if(!checkMate&&!stalmate&&legalMove&&!repetition){
-            if(piscecount>10){
-                evall=minimax(3,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }else if(piscecount>5){
-                evall=minimax(4,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }else{
-                evall=minimax(5,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }
-        }
-
-            stalmate=false
-            checkMate=false
-            turn=tempturn
-
-            if(evall<finalEvaluationMove){
-                finalEvaluationMove=evall
-                aipiscetomove=copypisceTochangeValue
-                aipisctomoveindx=piscetomoveind
-                aimove=moveindx
-            }
-
-            prevposition=previuspositions
-            board=copyBoard
-            piscesTracker[turn]=copypisces
-            castle=temporarycastle
-            shortcutseval=temporaryevaluation
-        })
-
-        copyCaptures.forEach(moveindx=>{
-            var copyBoard=[...board]
-            let temporarycastle=Object.assign({},castle)
-            var copybpisces=[...piscesTracker[turn]]
-            var copywpisces=[...piscesTracker[switchTurns[turn]]]
-            let tempturn=turn
-            let tempiskingincheck=iskingincheck
-            let temporaryevaluation=Object.assign({},shortcutseval)
-            let piscetomovecopy=pisce
-            let pisceToCapture=board[moveindx]
-            legalMove=true
-            if(pisce[1]=="p"&&potPromotion.length>0){
-                    pisce=turn+"q"   
-                     //add eval
-                     shortcutseval[turn]+=800
-            }
-            
-            //change js board
-            board[piscetomoveind]=emptySquere
-            board[moveindx]=pisce
-            //change piscetrack
-            piscesTracker[turn].splice(piscesTracker[turn].indexOf(piscetomoveind),1)
-            piscesTracker[turn].push(moveindx)
-            piscesTracker[switchTurns[turn]].splice(piscesTracker[switchTurns[turn]].indexOf(moveindx),1)
-            //change eval start
-            if(pisce[1]=="k"){
-                shortcutseval[turn]-=shortcutskings[turn][isItMiddleGame][piscetomoveind]
-                shortcutseval[turn]+=shortcutskings[turn][isItMiddleGame][moveindx]
-                shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                if(pisceToCapture[1]=="p"){
-                    shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][moveindx]
-                }else if(pisceToCapture[1]=="k"){
-                    shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
+             if(!checkMate&&!stalmate){
+                if(piscount==2){
+                    finalDepth=7
+                    eval=minimax(7,-Infinity,Infinity,isItMinPlayer)
+                }else if(piscount==3&&potentailmoves<20&&potentialmovesForOpositside<20){
+                    finalDepth=6
+                    eval=minimax(6,-Infinity,Infinity,isItMinPlayer)
+                }else if(potentailmoves<14&&movecount>24&&potentialmovesForOpositside<14){
+                    finalDepth=6
+                    eval=minimax(6,-Infinity,Infinity,isItMinPlayer)
+                }else if(potentailmoves<20&&movecount>24&&potentialmovesForOpositside<20){
+                    finalDepth=5
+                    eval=minimax(5,-Infinity,Infinity,isItMinPlayer)
+                }else if(potentailmoves<30&&movecount>24&&potentialmovesForOpositside<30){
+                    finalDepth=4
+                    eval=minimax(4,-Infinity,Infinity,isItMinPlayer)
                 }else{
-                    shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][moveindx]
-                }
-            }else if(pisce[1]=="p"){
-                shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][piscetomoveind]
-                shortcutseval[turn]+=shortcutspawn[turn][isItMiddleGame][moveindx]
-                shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                if(pisceToCapture[1]=="p"){
-                    shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][moveindx]
-                }else if(pisceToCapture[1]=="k"){
-                    shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                }else{
-                    shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][moveindx]
-                }
-            }else{
-                if(piscetomovecopy[1]=="p"){
-                    shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][piscetomoveind]
-                }else{
-                    shortcutseval[turn]-=shortcuts[turn][pisce][piscetomoveind]
-                }
-                shortcutseval[turn]+=shortcuts[turn][pisce][moveindx]
-                shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                if(pisceToCapture[1]=="p"){
-                    shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][moveindx]
-                }else if(pisceToCapture[1]=="k"){
-                    shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                }else{
-                    shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][moveindx]
+                    finalDepth=3
+                    eval=minimax(3,-Infinity,Infinity,isItMinPlayer)
                 }
             }
-            //change eval end
-
-            let tempetempturn=turn
+            //reset everything 
             turn=switchTurns[turn]
             checkTurn=new RegExp("^"+turn,"i")
-            addAttackedSqueres("b")
-            checkIfKingIsInCheck()
-            isitCheckmate("w")
-            turn=tempetempturn
-            iskingincheck=tempiskingincheck
-            checkTurn=new RegExp("^"+turn,"i")
+            capturedPisce=tempcapturedpisce
 
-            if(checkMate){
-                evall=-1000000000000
-            }else if(stalmate){
-                evall=0
-            }
-            
-            //check if move is illegal
-           if(pisce[1]=="k"){
-                let legality=validQueenKing.every(elem=>{
-                    return board[moveindx+elem]!="wk"
-                })
-                if(!legality){
-                    evall=100000000000000  
-                    legalMove=false     
-                }
+            if(isItMinPlayer&&eval < potCaptureMinEval){
+                potCaptureMinEval=eval
+                bestPisceToCaptureWith=piscecopy
+                bestPisceToCaptureWithindx=pisceindx
+                bestpotCapture=potcapture
+            }else if(!isItMinPlayer&&eval > potCaptureMinEval){
+                potCaptureMinEval=eval
+                bestPisceToCaptureWith=piscecopy
+                bestPisceToCaptureWithindx=pisceindx
+                bestpotCapture=potcapture
             }
 
-        if(!checkMate&&!stalmate&&legalMove){
-            if(piscecount>10){
-                evall=minimax(3,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }else if(piscecount>5){
-                evall=minimax(4,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }else{
-                evall=minimax(5,-Infinity,+Infinity,true,piscesTracker["w"],"w")
-            }
-        }
+            undoMove(piscecopy,pisceindx,potcapture,true,capturedPisce,false)
+            //refresh evalution
+            shortcutseval["w"]=wSideEvaluation
+            shortcutseval["b"]=bSideEvaluation
+            prevposition=tempprevposition
 
-            stalmate=false
-            checkMate=false
-
-            turn=tempturn
-            if(evall<finalEvaluationCapture){
-                finalEvaluationCapture=evall
-                aipiscetoCaptureWith=copypisceTochangeValue
-                aipiscetoCaptureWithindx=piscetomoveind
-                aicapture=moveindx
-            }
-
-            piscesTracker[switchTurns[turn]]=copywpisces
-            board=copyBoard
-            piscesTracker[turn]=copybpisces
             castle=temporarycastle
-            shortcutseval=temporaryevaluation
+            pisce=piscecopy
+            unpassantt=potUnPassantcopy
+            iskingincheck=iskingincheckcopy
+            potPromotion=potpromotioncopy
         })
-
+        unpassantt=potunpassantcopyy
     })
 
-    checkTurn=new RegExp("^"+turn,"i")
-    console.log(finalEvaluationMove)
-    console.log(finalEvaluationCapture)
-    if(finalEvaluationMove<finalEvaluationCapture){
-        validMoves(aipiscetomove,aipisctomoveindx)
-        pisceToMoveIndx=indexOnRealBoard(aipisctomoveindx)
-        pisceToMove=aipiscetomove
-        currentPisceindxs=indexOnRealBoard(aimove)
-        currentPisce=100
-        guiChess()
+
+
+
+    console.log(potMoveMinEval)
+    console.log(potCaptureMinEval)
+    
+    if(isItMinPlayer){
+        if(potMoveMinEval<potCaptureMinEval){
+            validMoves(bestPisceToMove,bestPisceToMoveindx)
+            pisceToMoveIndx=indexOnRealBoard(bestPisceToMoveindx)
+            currentPisceindxs=indexOnRealBoard(bestpotmove)
+            currentPisce=100
+            guiChess()
+            //for statistic
+            document.querySelector(".eval").textContent=potMoveMinEval
+            document.querySelector(".best-move-name").textContent=bestmovename
+            document.querySelector(".final-depth").textContent=finalDepth+1
+            document.querySelector(".variation-amount").textContent=variationAmount
+        }else{
+            validMoves(bestPisceToCaptureWith,bestPisceToCaptureWithindx)
+            pisceToMoveIndx=indexOnRealBoard(bestPisceToCaptureWithindx)
+            currentPisceindxs=indexOnRealBoard(bestpotCapture)
+            currentPisce=board[bestpotCapture]
+            guiChess()
+             //for statistic
+            document.querySelector(".eval").textContent=potCaptureMinEval
+            document.querySelector(".best-move-name").textContent=bestmovename
+            document.querySelector(".final-depth").textContent=finalDepth+1
+            document.querySelector(".variation-amount").textContent=variationAmount
+        }
     }else{
-        validMoves(aipiscetoCaptureWith,aipiscetoCaptureWithindx)
-        pisceToMoveIndx=indexOnRealBoard(aipiscetoCaptureWithindx)
-        pisceToMove=aipiscetoCaptureWith
-        currentPisceindxs=indexOnRealBoard(aicapture)
-        currentPisce=board[aicapture]
-        guiChess()
+        if(potMoveMinEval>potCaptureMinEval){
+            validMoves(bestPisceToMove,bestPisceToMoveindx)
+            pisceToMoveIndx=indexOnRealBoard(bestPisceToMoveindx)
+            currentPisceindxs=indexOnRealBoard(bestpotmove)
+            currentPisce=100
+            guiChess()
+            //for statistic
+            document.querySelector(".eval").textContent=potMoveMinEval
+            document.querySelector(".best-move-name").textContent=bestmovename
+            document.querySelector(".final-depth").textContent=finalDepth+1
+            document.querySelector(".variation-amount").textContent=variationAmount
+        }else{
+            validMoves(bestPisceToCaptureWith,bestPisceToCaptureWithindx)
+            pisceToMoveIndx=indexOnRealBoard(bestPisceToCaptureWithindx)
+            currentPisceindxs=indexOnRealBoard(bestpotCapture)
+            currentPisce=board[bestpotCapture]
+            guiChess()
+            //for statistic
+            document.querySelector(".eval").textContent=potCaptureMinEval
+            document.querySelector(".best-move-name").textContent=bestmovename
+            document.querySelector(".final-depth").textContent=finalDepth+1
+            document.querySelector(".variation-amount").textContent=variationAmount
+        }
     }
 }
 
 
-function minimax(depth,alpha,beta,maxsimazingPlayer,piscecTocheck,turnvalue){ 
-    if(depth==0){
+function minimax(depth,alpha,beta,maxsimazingPlayer){ 
+    let piscesinedxcopy=[...piscesTracker[turn]]
+    if(depth==0||piscesinedxcopy.length==0){
        return bothsideEval()
     }
-    let checkpisces=[...piscecTocheck]
-
-
+    let eval;
     if(maxsimazingPlayer){
-        let maxvalue;
-        let maxvaluepotmove=-Infinity
-        let maxvaluepotCapture=-Infinity
+        let maxvaluePotCapture=-Infinity
+        let maxvaluePotMove=-Infinity
+        for(let i=0;i<piscesinedxcopy.length;i++){
+            let pisceindx=piscesinedxcopy[i]
+            let pisce=board[pisceindx]
+            validMovesAi(pisce,pisceindx)
+            //copy potcaptures potmoves
+            let potMovesCopy=[...potMoves]
+            let potCapturesCopy=[...potCaptures]
+            for(let j=0;j<potCapturesCopy.length;j++){
+                if(depth==1){
+                    variationAmount++
+                }
+                let potcapture=potCapturesCopy[j]
+                let wSideEvaluation=shortcutseval["w"]
+                let bSideEvaluation=shortcutseval["b"]
+                let potpromotioncopy=[...potPromotion]
 
+                let temporarycastle=Object.assign({},castle)
+                let copypisce=board[pisceindx];
     
-            for(let j=0;j<checkpisces.length;j++){
-                let maxPlayerMoveindx=checkpisces[j]
-                turn=turnvalue 
-                checkTurn=new RegExp("^"+turnvalue,"i")
-                let maxPlayerpisce=board[maxPlayerMoveindx]
-                let copypisce=maxPlayerpisce
-                validMovesAi(maxPlayerpisce,maxPlayerMoveindx)
-                let potmovescopy=[...potMoves]
-                let potCapturescopy=[...potCaptures]
-                let tempcastle=Object.assign({},castle)
-
-                for(let i=0;i<potmovescopy.length;i++){
-                    let tempPistrack=[...piscesTracker["w"]]
-                    let tempboard=[...board]
-                    let temporaryevaluation=Object.assign({},shortcutseval)
-                    
-                    if(maxPlayerpisce[1]=="p"){
-                        //check if move is unpassant
-                        if(potPromotion.length>0){
-                            maxPlayerpisce=turn+"q"   
-                            //add eval
-                            shortcutseval[turn]+=800
-                        }
-                    }
-
-                    
-                    if(maxPlayerpisce[1]=="k"){
-                        let isItCastle=potmovescopy[i]-maxPlayerMoveindx
-                        if(isItCastle==2){
-                            castlecheck(files.file_8,files.file_6)
-                        }else if(isItCastle==-2){
-                            castlecheck(files.file_1,files.file_4)
-                        }   
-                    }
-
-                                
-                     //change js board
-                    board[maxPlayerMoveindx]=emptySquere
-                    board[potmovescopy[i]]=maxPlayerpisce
-                    //change piscetrack
-                    piscesTracker[turn].splice(piscesTracker[turn].indexOf(maxPlayerMoveindx),1)
-                    piscesTracker[turn].push(potmovescopy[i])
-                    //change evalluation start
-                    if(maxPlayerpisce[1]=="k"){
-                        shortcutseval[turn]-=shortcutskings[turn][isItMiddleGame][maxPlayerMoveindx]
-                        shortcutseval[turn]+=shortcutskings[turn][isItMiddleGame][potmovescopy[i]]
-                    }else if(maxPlayerpisce[1]=="p"){
-                        shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                        shortcutseval[turn]+=shortcutspawn[turn][isItMiddleGame][potmovescopy[i]]
-                    }else{
-                        if(copypisce[1]=="p"){
-                            shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                        }else{
-                            shortcutseval[turn]-=shortcuts[turn][maxPlayerpisce][maxPlayerMoveindx]
-                        }
-                        shortcutseval[turn]+=shortcuts[turn][maxPlayerpisce][potmovescopy[i]]
-                    }
-                    //end
-                    evall=minimax(depth-1,alpha,beta,false,piscesTracker["b"],"b")
-                    maxvaluepotmove=Math.max(maxvaluepotmove,evall)
-                    board=tempboard
-                    piscesTracker["w"]=tempPistrack
-                    turn=turnvalue
-                    castle=tempcastle
-                    shortcutseval=temporaryevaluation
-                    alpha=Math.max(evall,alpha)
-                    if(alpha>=beta){
-                       break;
-                    }
-                }
-
-                if(alpha>=beta){
-                    break;
-                }
-
-                for(let i=0;i<potCapturescopy.length;i++){
-                    let tempPistrack=[...piscesTracker["w"]]
-                    var copywpiscess=[...piscesTracker["b"]]
-                    let tempboard=[...board]
-                    let temporaryevaluation=Object.assign({},shortcutseval)
-                    let pisceToCapture=board[potCapturescopy[i]]
-
-                    if(maxPlayerpisce[1]=="p"&&potPromotion.length>0){
-                        maxPlayerpisce=turn+"q"   
+                //is it promotion
+                if(pisce[1]=="p"){
+                    if(potPromotion.length>0){
+                        pisce=turn+"q"
                         //add eval
                         shortcutseval[turn]+=800
                     }
-
-  
-                    //change js board
-                    board[maxPlayerMoveindx]=emptySquere
-                    board[potCapturescopy[i]]=maxPlayerpisce
-                    //change piscetrack
-                    piscesTracker[turn].splice(piscesTracker[turn].indexOf(maxPlayerMoveindx),1)
-                    piscesTracker[turn].push(potCapturescopy[i])
-                    piscesTracker[switchTurns[turn]].splice(piscesTracker[switchTurns[turn]].indexOf(potCapturescopy[i]),1)
-                    //change evaluation start
-                    //change eval start
-                    if(maxPlayerpisce[1]=="k"){
-                        shortcutseval[turn]-=shortcutskings[turn][isItMiddleGame][maxPlayerMoveindx]
-                        shortcutseval[turn]+=shortcutskings[turn][isItMiddleGame][potCapturescopy[i]]
-                        shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                        if(pisceToCapture[1]=="p"){
-                            shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                        }else if(pisceToCapture[1]=="k"){
-                            shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                        }else{
-                            shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][potCapturescopy[i]]
-                        }
-                    }else if(maxPlayerpisce[1]=="p"){
-                        shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                        shortcutseval[turn]+=shortcutspawn[turn][isItMiddleGame][potCapturescopy[i]]
-                        shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                        if(pisceToCapture[1]=="p"){
-                            shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                        }else if(pisceToCapture[1]=="k"){
-                            shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                        }else{
-                            shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][potCapturescopy[i]]
-                        }
-                    }else{
-                        if(copypisce[1]=="p"){
-                            shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                        }else{
-                            shortcutseval[turn]-=shortcuts[turn][maxPlayerpisce][maxPlayerMoveindx]
-                        }
-                        shortcutseval[turn]+=shortcuts[turn][maxPlayerpisce][potCapturescopy[i]]
-                        shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                        if(pisceToCapture[1]=="p"){
-                            shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                        }else if(pisceToCapture[1]=="k"){
-                            shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                        }else{
-                            shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][potCapturescopy[i]]
-                        }
-                    }
-                    //end
-                    evall=minimax(depth-1,alpha,beta,false,piscesTracker["b"],"b")
-                    maxvaluepotCapture=Math.max(evall,maxvaluepotCapture)
-                    piscesTracker["b"]=copywpiscess
-                    board=tempboard
-                    piscesTracker["w"]=tempPistrack
-                    turn=turnvalue
-                    castle=tempcastle
-                    shortcutseval=temporaryevaluation
-                    alpha=Math.max(evall,alpha)
-                    if(alpha>=beta){
-                        break;
-                    }
                 }
 
-                if(alpha>=beta){
-                    break;
-                }
-
-            }
-
-
-            maxvalue=Math.max(maxvaluepotmove,maxvaluepotCapture)
-            if(maxvalue==-Infinity){
-                return -100000000
-            }
-
-            return maxvalue
-    }else{
-        let minvalue;
-        let minvaluepotmove=+Infinity
-        let minvaluepotCapture=+Infinity
-
-
-        for(let j=0;j<checkpisces.length;j++){
-            let maxPlayerMoveindx=checkpisces[j]
-            turn=turnvalue
-            checkTurn=new RegExp("^"+turnvalue,"i")
-            let maxPlayerpisce=board[maxPlayerMoveindx]
-            let copypisce=maxPlayerpisce
-            validMovesAi(maxPlayerpisce,maxPlayerMoveindx)
-            let potmovescopy=[...potMoves]
-            let potCapturescopy=[...potCaptures]
-            let tempcastle=Object.assign({},castle)
-
-            for(let i=0;i<potmovescopy.length;i++){
-                let tempPistrack=[...piscesTracker["b"]]
-                let tempboard=[...board]
-                let temporaryevaluation=Object.assign({},shortcutseval)
-                
-                if(maxPlayerpisce[1]=="p"){
-                    if(potPromotion.length>0){
-                        maxPlayerpisce=turn+"q"   
-                        //add value
-                        shortcutseval[turn]+=800
-                    }
-                }
-
-                
-                if(maxPlayerpisce[1]=="k"){
-                    let isItCastle=potmovescopy[i]-maxPlayerMoveindx
-                    if(isItCastle==2){
-                        castlecheck(files.file_8,files.file_6)
-                    }else if(isItCastle==-2){
-                        castlecheck(files.file_1,files.file_4)
-                    }   
-                }
-
-                 //change js board
-                board[maxPlayerMoveindx]=emptySquere
-                board[potmovescopy[i]]=maxPlayerpisce
-                //change piscetracker
-                piscesTracker[turn].splice(piscesTracker[turn].indexOf(maxPlayerMoveindx),1)
-                piscesTracker[turn].push(potmovescopy[i])
-                //change evall start
-                 if(maxPlayerpisce[1]=="k"){
-                    shortcutseval[turn]-=shortcutskings[turn][isItMiddleGame][maxPlayerMoveindx]
-                    shortcutseval[turn]+=shortcutskings[turn][isItMiddleGame][potmovescopy[i]]
-                }else if(maxPlayerpisce[1]=="p"){
-                    shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                    shortcutseval[turn]+=shortcutspawn[turn][isItMiddleGame][potmovescopy[i]]
+                playMove(pisce,pisceindx,potcapture,true)
+                changeEvall(turn,pisce,pisceindx,potcapture,capturedPisce,copypisce)
+                 //set everything for next player
+                turn="b"
+                checkTurn=/^b/i
+                let tempcapturedpisce=capturedPisce
+                if(depth==1){
+                    eval=quiescenceSearch(potcapture,false)
                 }else{
-                    if(copypisce[1]=="p"){
-                        shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                    }else{
-                        shortcutseval[turn]-=shortcuts[turn][maxPlayerpisce][maxPlayerMoveindx]
-                    }
-                    shortcutseval[turn]+=shortcuts[turn][maxPlayerpisce][potmovescopy[i]]
+                    eval=minimax(depth-1,alpha,beta,false)
                 }
-                //end
-                evall=minimax(depth-1,alpha,beta,true,piscesTracker["w"],"w")
-               
+                 //reset everything 
+                turn="w"
+                checkTurn=/^w/i
+                capturedPisce=tempcapturedpisce
+    
+                maxvaluePotCapture=Math.max(eval,maxvaluePotCapture)
+                undoMove(copypisce,pisceindx,potcapture,true,capturedPisce)
+                //refresh evalution
+                shortcutseval["w"]=wSideEvaluation
+                shortcutseval["b"]=bSideEvaluation
 
-                minvaluepotmove=Math.min(evall,minvaluepotmove)
-                board=tempboard
-                piscesTracker["b"]=tempPistrack
-                turn=turnvalue
-                castle=tempcastle
-                shortcutseval=temporaryevaluation
-                beta=Math.min(evall,beta)
+                castle=temporarycastle
+                pisce=copypisce
+                potPromotion=potpromotioncopy
+                //alpha beta pruning
+                alpha=Math.max(eval,alpha)
                 if(alpha>=beta){
                     break;
                 }
             }
-
             if(alpha>=beta){
                 break;
             }
 
-            for(let i=0;i<potCapturescopy.length;i++){
-                let tempPistrack=[...piscesTracker["w"]]
-                var copywpiscess=[...piscesTracker["b"]]
-                let tempboard=[...board]
-                let pisceToCapture=board[potCapturescopy[i]]
-                let temporaryevaluation=Object.assign({},shortcutseval)
-
-                if(maxPlayerpisce[1]=="p"&&potPromotion.length>0){
-                    maxPlayerpisce=turn+"q"   
-                    //add value
-                    shortcutseval[turn]+=800
+            for(let j=0;j<potMovesCopy.length;j++){
+                if(depth==1){
+                    variationAmount++
                 }
-        
+                let potmove=potMovesCopy[j]
+                //create copy evaluation
+                let wSideEvaluation=shortcutseval["w"]
+                let bSideEvaluation=shortcutseval["b"]
 
-                //change js board
-                board[maxPlayerMoveindx]=emptySquere
-                board[potCapturescopy[i]]=maxPlayerpisce
-                //change piscetrack
-                piscesTracker[turn].splice(piscesTracker[turn].indexOf(maxPlayerMoveindx),1)
-                piscesTracker[turn].push(potCapturescopy[i])
-                piscesTracker[switchTurns[turn]].splice(piscesTracker[switchTurns[turn]].indexOf(potCapturescopy[i]),1)
-                //change evall start
-                if(maxPlayerpisce[1]=="k"){
-                    shortcutseval[turn]-=shortcutskings[turn][isItMiddleGame][maxPlayerMoveindx]
-                    shortcutseval[turn]+=shortcutskings[turn][isItMiddleGame][potCapturescopy[i]]
-                    shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                    if(pisceToCapture[1]=="p"){
-                        shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                    }else if(pisceToCapture[1]=="k"){
-                        shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                    }else{
-                        shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][potCapturescopy[i]]
-                    }
-                }else if(maxPlayerpisce[1]=="p"){
-                    shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                    shortcutseval[turn]+=shortcutspawn[turn][isItMiddleGame][potCapturescopy[i]]
-                    shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                    if(pisceToCapture[1]=="p"){
-                        shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                    }else if(pisceToCapture[1]=="k"){
-                        shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                    }else{
-                        shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][potCapturescopy[i]]
-                    }
-                }else{
-                    if(copypisce[1]=="p"){
-                        shortcutseval[turn]-=shortcutspawn[turn][isItMiddleGame][maxPlayerMoveindx]
-                    }else{
-                        shortcutseval[turn]-=shortcuts[turn][maxPlayerpisce][maxPlayerMoveindx]
-                    }
-                    shortcutseval[turn]+=shortcuts[turn][maxPlayerpisce][potCapturescopy[i]]
-                    shortcutseval[switchTurns[turn]]-=materialValues[pisceToCapture[1]]
-                    if(pisceToCapture[1]=="p"){
-                        shortcutseval[switchTurns[turn]]-=shortcutspawn[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                    }else if(pisceToCapture[1]=="k"){
-                        shortcutseval[switchTurns[turn]]-=shortcutskings[switchTurns[turn]][isItMiddleGame][potCapturescopy[i]]
-                    }else{
-                        shortcutseval[switchTurns[turn]]-=shortcuts[switchTurns[turn]][pisceToCapture][potCapturescopy[i]]
+                let temporarycastle=Object.assign({},castle)
+                let IsCastlePlayed=false;
+                let copypisce=board[pisceindx];
+                let potpromotioncopy=[...potPromotion]
+
+                //is it promotion
+                if(pisce[1]=="p"){
+                    if(potPromotion.length>0){
+                        pisce=turn+"q"
+                        //add eval
+                        shortcutseval[turn]+=800
                     }
                 }
-                //end
-                evall=minimax(depth-1,alpha,beta,true,piscesTracker["w"],"w")
 
-                minvaluepotCapture=Math.min(evall,minvaluepotCapture)
-                piscesTracker["b"]=copywpiscess
-                board=tempboard
-                piscesTracker["w"]=tempPistrack
-                turn=turnvalue
-                castle=tempcastle
-                shortcutseval=temporaryevaluation
-                beta=Math.min(evall,beta)
+                //castle
+                if(pisce[1]=="k"){
+                    let isItCastle=potmove-pisceindx
+                    if(isItCastle==2){
+                        castlecheck(files.file_8,files.file_6)
+                        IsCastlePlayed="r"
+                    }else if(isItCastle==-2){
+                        castlecheck(files.file_1,files.file_4)
+                        IsCastlePlayed="l"
+                    }   
+                }
+
+                playMove(pisce,pisceindx,potmove,false)
+                changeEvall(turn,pisce,pisceindx,potmove,NaN,copypisce)
+                //set everything for next player
+                turn="b"
+                checkTurn=/^b/i
+                //50move rule
+                let useminimax=true
+                fiftymove++
+                if(fiftymove==100){
+                    eval=0
+                    useminimax=false
+                }
+                //3move repetition
+                let tempprevposition=[...prevposition]
+                addPosition(prevposition)
+                checkFor3repetition()
+                if(isItRepetition3>=3){
+                    eval=0
+                    useminimax=false
+                }
+
+                if(useminimax){
+                     eval=minimax(depth-1,alpha,beta,false)
+                }
+                //reset prevpositions
+                prevposition=tempprevposition
+                //reset fiftymove
+                fiftymove--
+                //reset everything
+                turn="w"
+                checkTurn=/^w/i
+                maxvaluePotMove=Math.max(maxvaluePotMove,eval)
+                undoMove(copypisce,pisceindx,potmove,false,NaN,IsCastlePlayed)
+                //refresh evalution
+                shortcutseval["w"]=wSideEvaluation
+                shortcutseval["b"]=bSideEvaluation
+
+                castle=temporarycastle
+                pisce=copypisce
+                potPromotion=potpromotioncopy
+                //alpha beta pruning
+                alpha=Math.max(eval,alpha)
                 if(alpha>=beta){
-                   break;
+                    break;
                 }
             }
-       
             if(alpha>=beta){
-               break;
+                break;
             }
         }
-        minvalue=Math.min(minvaluepotmove,minvaluepotCapture)
-        if(minvalue==+Infinity){
-            return 100000000
+        
+    
+        let maxValue=Math.max(maxvaluePotCapture,maxvaluePotMove)
+        return maxValue
+    }else{
+        let minvaluePotCapture=Infinity
+        let minvaluePotMove=Infinity
+        for(let i=0;i<piscesinedxcopy.length;i++){
+            let pisceindx=piscesinedxcopy[i]
+            let pisce=board[pisceindx]
+            validMovesAi(pisce,pisceindx)
+            //copy potcaptures potmoves
+            let potMovesCopy=[...potMoves]
+            let potCapturesCopy=[...potCaptures]
+            for(let j=0;j<potCapturesCopy.length;j++){
+                if(depth==1){
+                    variationAmount++
+                }
+                let potcapture=potCapturesCopy[j]
+                let wSideEvaluation=shortcutseval["w"]
+                let bSideEvaluation=shortcutseval["b"]
+
+                let temporarycastle=Object.assign({},castle)
+                let copypisce=board[pisceindx];
+                let potpromotioncopy=[...potPromotion]
+
+                //is it promotion
+                if(pisce[1]=="p"){
+                    if(potPromotion.length>0){
+                        pisce=turn+"q"
+                        //add eval
+                        shortcutseval[turn]+=800
+                    }
+                }
+
+                playMove(pisce,pisceindx,potcapture,true)
+                changeEvall(turn,pisce,pisceindx,potcapture,capturedPisce,copypisce)
+                //set everything for next player
+                turn="w"
+                checkTurn=/^w/i
+                let tempcapturedpisce=capturedPisce
+                if(depth==1){
+                    eval=quiescenceSearch(potcapture,true)
+                }else{
+                    eval=minimax(depth-1,alpha,beta,true)
+                }
+                //reset everything 
+                turn="b"
+                checkTurn=/^b/i
+                capturedPisce=tempcapturedpisce
+
+                minvaluePotCapture=Math.min(eval,minvaluePotCapture)
+                undoMove(copypisce,pisceindx,potcapture,true,capturedPisce,true)
+                //refresh evalution
+                shortcutseval["w"]=wSideEvaluation
+                shortcutseval["b"]=bSideEvaluation
+
+                castle=temporarycastle
+                pisce=copypisce
+                potPromotion=potpromotioncopy
+                //alpha beta pruning
+                beta=Math.min(eval,beta)
+                if(alpha>=beta){
+                    break;
+                }
+            }
+            if(alpha>=beta){
+                break;
+            }
+
+            
+            for(let j=0;j<potMovesCopy.length;j++){
+                if(depth==1){
+                    variationAmount++
+                }
+                let potmove=potMovesCopy[j]
+                //create copy evaluation
+                let wSideEvaluation=shortcutseval["w"]
+                let bSideEvaluation=shortcutseval["b"]
+
+                let temporarycastle=Object.assign({},castle)
+                let IsCastlePlayed=false;
+                let copypisce=board[pisceindx];
+                let potpromotioncopy=[...potPromotion]
+                //is it promotion
+                if(pisce[1]=="p"){
+                    if(potPromotion.length>0){
+                        pisce=turn+"q"
+                        //add eval
+                        shortcutseval[turn]+=800
+                    }
+                }
+
+                //castle
+                if(pisce[1]=="k"){
+                    let isItCastle=potmove-pisceindx
+                    if(isItCastle==2){
+                        castlecheck(files.file_8,files.file_6)
+                        IsCastlePlayed="r"
+                    }else if(isItCastle==-2){
+                        castlecheck(files.file_1,files.file_4)
+                        IsCastlePlayed='l'
+                    }   
+                }
+
+                playMove(pisce,pisceindx,potmove,false)
+                changeEvall(turn,pisce,pisceindx,potmove,NaN,copypisce)
+                //set everything for next player
+                turn="w"
+                checkTurn=/^w/i
+                //50move rule
+                let useminimax=true
+                fiftymove++
+                if(fiftymove==100){
+                    eval=0
+                    useminimax=false
+                }
+                 //3move repetition
+                 let tempprevposition=[...prevposition]
+                 addPosition(prevposition)
+                 checkFor3repetition()
+                 if(isItRepetition3>=3){
+                     eval=0
+                     useminimax=false
+                 }
+ 
+                if(useminimax){
+                    eval=minimax(depth-1,alpha,beta,true)
+                }
+                //reset prevpositions
+                prevposition=tempprevposition
+                //reset fiftymove
+                fiftymove--
+                //reset everything
+                turn="b"
+                checkTurn=/^b/i
+                minvaluePotMove=Math.min(minvaluePotMove,eval)
+                undoMove(copypisce,pisceindx,potmove,false,NaN,IsCastlePlayed)
+                //refresh evalution
+                shortcutseval["w"]=wSideEvaluation
+                shortcutseval["b"]=bSideEvaluation
+
+                castle=temporarycastle
+                pisce=copypisce
+                potPromotion=potpromotioncopy
+                //alpha beta pruning
+                beta=Math.min(eval,beta)
+                if(alpha>=beta){
+                    break;
+                }
+            }
+            if(alpha>=beta){
+                break;
+            }
         }
+        let minvalue=Math.min(minvaluePotCapture,minvaluePotMove)
         return minvalue
+    }
+}
+
+
+function playMove(pisce,pisceindx,moveindx,isitcapture){
+    if(isitcapture){
+        capturedPisce=board[moveindx]
+        piscesTracker[switchTurns[turn]].splice(piscesTracker[switchTurns[turn]].indexOf(moveindx),1)
+    }
+
+    board[pisceindx]=emptySquere
+    board[moveindx]=pisce
+
+    piscesTracker[turn].splice(piscesTracker[turn].indexOf(pisceindx),1)
+    piscesTracker[turn].push(moveindx)
+
+}
+
+function undoMove(pisce,pisceindx,moveindx,isitcapture,killedpisce,IsCastlePlayed){
+    if(isitcapture){
+        piscesTracker[switchTurns[turn]].push(moveindx)
+        board[moveindx]=killedpisce
+    }else{
+        board[moveindx]=emptySquere
+    }
+
+    if(IsCastlePlayed){
+        if(IsCastlePlayed=="r"){
+            removeCastle(files.file_8,files.file_6)
+        }else if(IsCastlePlayed=="l"){
+            removeCastle(files.file_1,files.file_4)
+        }
     }
 
 
-
-    
+    board[pisceindx]=pisce
+    piscesTracker[turn].splice(piscesTracker[turn].indexOf(moveindx),1)
+    piscesTracker[turn].push(pisceindx)
 }
 
 
@@ -649,13 +712,147 @@ function castlecheck(rankToRemoveRook,rankToMoveRook){
     //change board
     board[indexOnJsBoard(rooksquere)]=emptySquere
     board[indexOnJsBoard(rooksquereToMove)]=rook
-     //change element on piece tracker
-     rightArr=piscesTracker[turn]
-     rightArr.splice(rightArr.indexOf(indexOnJsBoard(rooksquere)),1)
-     rightArr.push(indexOnJsBoard(rooksquereToMove))
+    //change element on piece tracker
+    rightArr=piscesTracker[turn]
+    rightArr.splice(rightArr.indexOf(indexOnJsBoard(rooksquere)),1)
+    rightArr.push(indexOnJsBoard(rooksquereToMove))
     //change eval
     shortcutseval[turn]-=shortcuts[turn][rook][indexOnJsBoard(rooksquere)]
     shortcutseval[turn]+=shortcuts[turn][rook][indexOnJsBoard(rooksquereToMove)]
     //if played castle previus positions cant repeat
     prevposition=[]
 }
+
+
+function removeCastle(rankToRemoveRook,rankToMoveRook){
+    let rook=turn+"r"
+    let rooksquereToMove=[rankToRemoveRook,boardRankByTurn[turn]]
+    let rooksquere=[rankToMoveRook,boardRankByTurn[turn]]
+    //change board
+    board[indexOnJsBoard(rooksquere)]=emptySquere
+    board[indexOnJsBoard(rooksquereToMove)]=rook
+    rightArr=piscesTracker[turn]
+    rightArr.splice(rightArr.indexOf(indexOnJsBoard(rooksquere)),1)
+    rightArr.push(indexOnJsBoard(rooksquereToMove))
+    //change eval
+    shortcutseval[turn]-=shortcuts[turn][rook][indexOnJsBoard(rooksquere)]
+    shortcutseval[turn]+=shortcuts[turn][rook][indexOnJsBoard(rooksquereToMove)]
+}
+function checkFor3repetition(){
+    isItRepetition3=0;
+    let elementToCheck=prevposition[prevposition.length-1];
+
+    prevposition.forEach(position=>{
+        if(elementToCheck==position){
+            isItRepetition3++
+        }
+    })
+}
+
+function quiescenceSearch(squereindx,maxsimazingPlayer){
+    let piscescopy=[...piscesTracker[turn]]
+    let focusSquere=squereindx
+
+    if(maxsimazingPlayer){
+        let maxvalue=-Infinity
+        for(let i=0;i<piscescopy.length;i++){
+            let pisceindx=piscescopy[i]
+            let pisce=board[pisceindx]
+            validMovesAi(pisce,pisceindx)
+            let potCapturesCopy=[...potCaptures]
+            if(potCapturesCopy.indexOf(focusSquere)>-1){
+                potcapture=focusSquere
+                let wSideEvaluation=shortcutseval["w"]
+                let bSideEvaluation=shortcutseval["b"]
+                let copypisce=board[pisceindx];
+                let potpromotioncopy=[...potPromotion]
+
+                //is it promotion
+                if(pisce[1]=="p"){
+                    if(potPromotion.length>0){
+                        pisce=turn+"q"
+                        //add eval
+                        shortcutseval[turn]+=800
+                    }
+                }
+    
+                playMove(pisce,pisceindx,potcapture,true)
+                changeEvall(turn,pisce,pisceindx,potcapture,capturedPisce,copypisce)
+                //set everything for next player
+                turn="b"
+                checkTurn=/^b/i
+                let tempcapturedpisce=capturedPisce
+                let eval=quiescenceSearch(focusSquere,false)
+                maxvalue=Math.max(eval,maxvalue)
+                turn="w"
+                checkTurn=/^w/i
+                capturedPisce=tempcapturedpisce
+                undoMove(copypisce,pisceindx,potcapture,true,capturedPisce)
+                //refresh evalution
+                shortcutseval["w"]=wSideEvaluation
+                shortcutseval["b"]=bSideEvaluation
+
+                pisce=copypisce
+                potPromotion=potpromotioncopy
+            }
+        }
+
+        if(maxvalue >-Infinity){
+            return maxvalue
+        }else{
+            return bothsideEval()
+        }
+
+    }else{
+        let minvalue=Infinity
+        for(let i=0;i<piscescopy.length;i++){
+            let pisceindx=piscescopy[i]
+            let pisce=board[pisceindx]
+            validMovesAi(pisce,pisceindx)
+            let potCapturesCopy=[...potCaptures]
+            if(potCapturesCopy.indexOf(focusSquere)>-1){
+                potcapture=focusSquere
+
+                let wSideEvaluation=shortcutseval["w"]
+                let bSideEvaluation=shortcutseval["b"]
+
+                let copypisce=board[pisceindx];
+                let potpromotioncopy=[...potPromotion]
+
+                //is it promotion
+                if(pisce[1]=="p"){
+                    if(potPromotion.length>0){
+                        pisce=turn+"q"
+                        //add eval
+                        shortcutseval[turn]+=800
+                    }
+                }
+    
+                playMove(pisce,pisceindx,potcapture,true)
+                changeEvall(turn,pisce,pisceindx,potcapture,capturedPisce,copypisce)
+                //set everything for next player
+                turn="w"
+                checkTurn=/^w/i
+                let tempcapturedpisce=capturedPisce
+                let eval=quiescenceSearch(focusSquere,true)
+                minvalue=Math.min(eval,minvalue)
+                turn="b"
+                checkTurn=/^b/i
+                capturedPisce=tempcapturedpisce
+                undoMove(copypisce,pisceindx,potcapture,true,capturedPisce)
+                //refresh evalution
+                shortcutseval["w"]=wSideEvaluation
+                shortcutseval["b"]=bSideEvaluation
+                
+                pisce=copypisce
+                potPromotion=potpromotioncopy
+            }
+        }
+        if(minvalue < Infinity){
+            return minvalue
+        }else{
+            return bothsideEval()
+        }
+    }
+}
+

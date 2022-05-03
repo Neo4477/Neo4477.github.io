@@ -1,19 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+/*variebles*/
+:root{
+    --main-size: 40vw
+}
 
+.main-test h1{
+   font-size: 2rem;
+}
 body{
     background-color: lightgray;
 }
 
 .main-board{
-    width: 40vw;
-    height: 40vw;
+    width: var(--main-size);
+    height: var(--main-size);
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    margin: 2.5vw auto;
+    margin: 2.5vw auto; 
+    direction: ltr;  /* reversed horizontal */
+  
 }
 
 .files{
     display: grid;
     grid-template-rows: repeat(8, 1fr);
+
 }
 
 .ranks{
@@ -27,10 +38,12 @@ body{
 }
 
 .white-box{
-    background-color: white;
+    /*background-color: white;*/
+    background-color: #F0D9B5;
 }
 .black-box{
-    background-color: #4d4d4d;
+    /*background-color: #4d4d4d;*/
+    background-color: #B58863;
 }
 /*order*/
 .order-1{
@@ -71,64 +84,301 @@ body{
     height: 25%;
     border-radius: 50%;
 }
-/*test*/
-.win{
-    position: fixed;
-    width: 80vw;
-    left: 10vw;
+/*ai statisctics*/
+.Ai-statistics{
     background-color: white;
-    height: 80vh;
-    top: 10vh;
-    font-size: 9rem;
+    width: 27vw;
+    position: absolute;
+    left: 1rem;
+    top: 9.5vw;
+    height: 38rem;
     text-align: center;
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
 }
 
-.show{
+.Ai-Title{
+    font-size: 3rem;
+    font-family: "Roboto", "sans-serif";
+    font-style: italic;
+}
+
+.Ai-icon{
+    color: red;
+}
+
+.statistics{
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+
+}
+
+.stat-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   
+}
+.stat-container h3{
+    position: relative;
+    left: 1rem;
+    font-size: 1.5rem;
+    font-family: "Roboto", "sans-serif";
+    font-style: italic;
+}
+
+.stat-container p{
+    position: relative;
+    right: 1rem;
+    font-size: 1.5rem;
+    font-family: "Roboto", "sans-serif";
+    font-style: italic;
+}
+
+/*move history/names*/
+.move-history{
+    position: absolute;
+    width: 26%;
+    top: 7.5vw;
+    right: -1.5rem;
+    margin-right: 3%;
+}
+
+.move-history-container{
+    width: 100%;
+    height: 17.5vw;
+    background-color: white;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+}
+
+.names{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.reiting{
+    font-size: 2rem;
+    position: relative;
+    right: 1rem;
+}
+
+.name-container{
+    display: flex;
+    align-items: center;
+    position: relative;
+    left: 1rem;
+}
+
+.circle-color{
+    position: relative;
+    color: #629924;
+    top: 0.15rem;
+    margin-right: 0.2rem;
+}
+
+.name{
+    font-family: "Roboto", "sans-serif";
+    font-style: italic;
+    font-size: 2rem;
+    margin-left: 0.2rem;
+}
+
+.title{
+    text-align: center;
+    font-size: 2.75rem;
+    margin: 0px auto;
+    padding: 0px;
+    padding-bottom: 0.5rem;
+    border-bottom: 0.15rem gray solid;
+    background-color: white;
+}
+
+.lists{
     display: flex;
 }
 
+.move-list{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 15%;
+}
 
-.draw{
-    position: fixed;
-    width: 80vw;
-    left: 10vw;
+ul li{
+    list-style: none;
+}
+
+ul{
+    margin: 0px;
+    padding-left: 0rem;
+}
+
+.amount-of-moves{
+  font-size: 2.2rem;
+  display: inline;
+  border-left: 0.15rem solid gray;
+  border-right: 0.15rem solid gray;
+  border-bottom: 0.15rem solid gray;
+  position: relative;
+  text-align: center;
+}
+
+.white-moves{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 42.5%;
+}
+
+.white-move{
+  font-size: 2.2rem;
+  display: inline;
+  border-right: 0.15rem solid gray;
+  border-bottom: 0.15rem solid gray;
+  position: relative;
+  text-align: center;
+}
+
+.black-moves{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 42.5%;
+}
+
+.black-move{
+    font-size: 2.2rem;
+    display: inline;
+    border-right: 0.15rem solid gray;
+    border-bottom: 0.15rem solid gray;
+    position: relative;
+    text-align: center;
+}
+
+/*play again*/
+.play-again{
+    font-size: 3rem;
+    background-color: #B58863;
+    border: none;
+    width: 100%;
+    color: white;
+    font-family: "Roboto";
+    font-style: italic;
+    cursor: pointer;
+}
+
+.new-round{
+    width: var(--main-size);
+    margin: 0 auto;
+
+}
+
+/*score*/
+.score{
+    display: flex;
+    flex-direction: column;
+    width: var(--main-size);
     background-color: white;
-    height: 80vh;
-    top: 10vh;
-    font-size: 9rem;
-    color: brown;
+    margin: 0 auto;
+}
+
+.score-gui{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 0.2rem solid #B58863;
+}
+
+.score-gui h3{
+    font-size: 2rem;
+    position: relative;
+    left: 2rem;
+    font-family: "Roboto", "sans-serif";
+    font-style: italic;
+}
+
+.score-gui p{
+    font-size: 2rem;
+    position: relative;
+    right: 2rem;
+    font-family: "Roboto", "sans-serif";
+    font-weight: 500;
+}
+
+
+/*test*/
+.win{
+    position: fixed;
+    width: 90vw;
+    left: 5vw;
+    background-color: white;
+    height: 90vh;
+    top: 5vh;
     text-align: center;
     display: none;
 }
 
-.submit{
-    background-color: transparent;
-    border-radius: 50px;
-    border: #4d4d4d 0.3rem solid;
-    padding: 0.70rem 2rem;
-    font-size: 2.15rem;
-    position: relative;
-    bottom: 10%;
-    cursor: pointer;
-    transition: 1s;
-    margin: 0 1rem;
-
+.show{
+    display: block;
 }
 
-.submit:hover{
-    background-color: #4d4d4d;
-    color: white;
-    transform: scale(1.1);
+.result{
+    font-size: 7rem;
+    font-family: "Roboto";
+    margin-top: 30vh;
 }
+@media (max-width: 2200px) and (min-width: 2000px){
+    :root{
+        --main-size: 40vw;
+    }
+
+    .Ai-statistics{
+        top: 8.2vw;
+    }
+}
+
+@media (max-width: 2000px) and (min-width: 1800px){
+    .Ai-statistics{
+        top: 7.3vw;
+    }
+}
+
+@media (max-width: 1800px) and (min-width: 1600px){
+    :root{
+        font-size: 15px;
+    }
+
+    .Ai-statistics{
+        position: absolute;
+        left: 1rem;
+        top: 5.7vw;
+    }
+}
+
+
 
 @media (max-width:1600px) and (min-width:1200px){
-    .main-board{
-        width: 42vw;
-        height: 42vw;
+    :root{
+        --main-size: 42vw;
+        font-size: 13px;
+    }
+
+    .Ai-statistics{
+        top: 8.7vw;
+        height: 35rem;
+        width: 26vw;
+    }
+
+    .Ai-Title{
+        font-size: 3rem;
+        margin: 1rem;
+    }
+
+    .Ai-icon{
+        transform: scale(0.8);
     }
 
     .draw{
@@ -139,11 +389,64 @@ body{
         font-size: 7rem;
     }
 }
+
+@media (max-width: 1400px) and (min-width: 1200px){
+
+    .Ai-statistics{
+        top: 7.5vw;
+        height: 32rem;
+    }
+
+    .stat-container h3{
+        margin: 1rem;
+    }
+
+    .stat-container p{
+       margin: 1rem;
+    }
+    
+    
+}
+
 
 @media (max-width:1200px) and (min-width: 801px){
-    .main-board{
+    :root{
+        --main-size: 60vw;
+        font-size: 16px;
+    }
+
+    .Ai-Title{
+        font-size: 3.5rem;
+        margin: 0.8rem;
+    }
+
+    .Ai-statistics{
+        position: relative;
+        top: 0px;
+        margin: 0 auto;
+        height: 29rem;
         width: 60vw;
-        height: 60vw;
+        left: 0px;
+    }
+
+    .statistics{
+        margin-top: 0rem;
+    }
+
+    .Ai-icon{
+        transform: scale(0.8);
+    }
+
+    .stat-container h3{
+        margin: 1rem;
+    }
+
+    .stat-container p{
+       margin: 1rem;
+    }
+
+    .move-history{
+        display: none;
     }
 
     .draw{
@@ -154,14 +457,53 @@ body{
         font-size: 5rem;
     }
 }
+
+@media (max-width: 1200px) and (min-width: 1000px){
+    .statistics{
+        margin-top: 1rem;
+    }
+    .Ai-statistics{
+        height: 30rem;
+    }
+
+    .Ai-Title{
+        margin: 1rem;
+    }
+    
+}
+
 
 @media (max-width:800px){
+    :root{
+        --main-size: 80vw;
+        font-size: 16px;
+    }
+
+    .move-history{
+        display: none;
+    }
+
     .main-board{
         position: relative;
-        width: 80vw;
-        height: 80vw;
-        top: 20vw;
     }
+
+    .Ai-statistics{
+        position: relative;
+        top: 0px;
+        margin: 0 auto;
+        height: 33rem;
+        width: 80vw;
+        left: 0px;
+    }
+
+    .stat-container h3{
+        margin: 1rem;
+    }
+
+    .stat-container p{
+       margin: 1rem;
+    }
+
 
     .draw{
         font-size: 5rem;
@@ -171,3 +513,32 @@ body{
         font-size: 5rem;
     }
 }
+
+@media (max-width: 550px){
+    :root{
+        --main-size: 80vw;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 420px){
+    :root{
+        --main-size: 90vw;
+        font-size: 12px;
+    }
+
+    .Ai-statistics{
+        width: 90vw;
+    }
+
+    .stat-container h3{
+       left: 0.5rem;
+    }
+
+    .stat-container p{
+       right: 0.5rem;
+    }
+}
+
+
+

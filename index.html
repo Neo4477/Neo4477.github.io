@@ -21,9 +21,33 @@
 
     </header>
     <main class="main">
+        <section class="Ai-statistics">
+            <h2 class="Ai-Title">Ai-statistics</h2>
+            <i class="fa-solid fa-power-off fa-8x Ai-icon"></i>
+            <div class="statistics">
+                <div class="evaluation stat-container">
+                    <h3>evaluation</h3>
+                    <p  class="eval">0</p>
+                </div>
+                <div class="best-move stat-container">
+                    <h3>best move</h3>
+                    <p class="best-move-name">NaN</p>
+                </div>
+                <div class="depth stat-container">
+                    <h3>depth</h3>
+                    <p class="final-depth">4</p>
+                </div>
+                <div class="calculated-variations stat-container">
+                    <h3>calculated variations</h3>
+                    <p class="variation-amount">0</p>
+                </div>
+
+            </div>
+
+        </section>
         <section class="main-board">
             <div class="files a">
-                <div class="ranks black-box order-1 wr"></div>
+                <div class="ranks black-box order-1 wr "></div>
                 <div class="ranks white-box order-2 wp"></div>
                 <div class="ranks black-box order-3"></div>
                 <div class="ranks white-box order-4"></div>
@@ -103,13 +127,53 @@
                 <div class="ranks black-box order-8 br"></div>
             </div>
         </section>
-        <section class="win">
-            <p class="winner"></p>
-            <button type="button" class="submit refresh">Refresh</button>
+        <section class="move-history">
+            <div class="name-computer names">
+                <div class="name-container">
+                    <i class="fa-solid fa-circle circle-color"></i>
+                    <h2 class="name">Computer</h2>
+                </div>
+                <h3 class="reiting">2000</h3>
+            </div>
+            <h2 class="title">move history</h2>
+            <div class="move-history-container" id="move-history">
+                <div class="lists">
+                    <ul class="move-list">
+                    </ul>
+                    <ul class="white-moves">
+                    </ul>
+                    <ul class="black-moves">     
+                    </ul>
+                </div>
+            </div>
+            <div class="name-player names">
+                <div class="name-container">
+                    <i class="fa-solid fa-circle circle-color"></i>
+                    <h2 class="name">User</h2>
+                </div>
+                <h3 class="reiting">?</h3>
+            </div>
         </section>
-        <section class="draw">
-            <p>draw</p>
-            <button type="button" class="submit refresh">Refresh</button>
+
+        <section class="score">
+            <div class="computer score-gui">
+                <h3>Computer</h3>
+                <p class="point computer-points">0</p>
+            </div>
+            <div class="user score-gui">
+                <h3>user</h3>
+                <p class="point user-points">0</p>
+            </div>
+            <div class="draw score-gui">
+                <h3>draw</h3>
+                <p class="point draws">0</p>
+            </div>
+        </section>
+        <section class="new-round">
+            <button class="play-again">Play Again</button>
+        </section>
+        <section class="win">
+            <h2 class="result"></h2>
         </section>
     </main>
 </body>

@@ -26,6 +26,7 @@ let validPawnMoves=[10]
 let vlaidpawnCaptures=[9,11]
 
 function validMoves(pisce,jsBoardIndx){
+    
     switch(pisce[1]){
         case "r":
             addPotMoves(jsBoardIndx,validRook)

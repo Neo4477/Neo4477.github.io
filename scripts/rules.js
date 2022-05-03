@@ -114,12 +114,18 @@ function uncheck(curpiesce,jsbooardIndx){
     let temporaryAttackedSqueres=[...rightAttackedSqueres[switchTurns[turn]]]
     let tempotraryAttackedPisce=[...rightAttackedPieces[switchTurns[turn]]]
     let tempPotCapture=[...potCaptures]
+    let copyboard1=[...board]
+    let copyboard2=[...board]
+    let tempunpasantt=unpassantt
     let tempPotMoves=filterCheckBlocks(true,curpiesce,jsbooardIndx)
+    board=copyboard1
     potCaptures=tempPotCapture
     potCaptures=filterCheckBlocks(false,curpiesce,jsbooardIndx)
+    board=copyboard2
     potMoves=tempPotMoves
     rightAttackedSqueres[switchTurns[turn]]=temporaryAttackedSqueres
     rightAttackedPieces[switchTurns[turn]]=tempotraryAttackedPisce
+    unpassantt=tempunpasantt
 }
 
 
@@ -169,7 +175,6 @@ function filterCheckBlocks(isPotMoves,curpiesce,jsbooardIndx){
 
         //addAttackedsqueres for player
         side=rightAttackedPieces[switchTurns[turn]]
-
         if(side.indexOf(kingsIndx[turn+"k"])==-1){
             if(curentpiscee[1]=="k"){
                 kingsIndx[turn+"k"]=jsbooardIndx
@@ -190,7 +195,6 @@ function filterCheckBlocks(isPotMoves,curpiesce,jsbooardIndx){
         return []
     }
 
-
 }
 
 
@@ -198,6 +202,7 @@ function filterCheckBlocks(isPotMoves,curpiesce,jsbooardIndx){
 
 
 function isitCheckmate(wichSide){
+    let tempunpasantt=unpassantt
     let piece;
     let elem;
     stalmate=true;
@@ -210,7 +215,7 @@ function isitCheckmate(wichSide){
         elem=pieceindx[i]
         piece=board[elem]
         validMoves(piece,elem)
-        uncheck(piece,elem)
+        uncheck(piece,elem) 
         let moves=[...potMoves,...potCaptures]
         if(moves.length>0){
             stalmate=false;
@@ -218,58 +223,81 @@ function isitCheckmate(wichSide){
             break;
         }
     }
+
+    unpassantt=tempunpasantt
 }
 
 
 //stalmate
 let prevposition=[]
-let valueToAdd;
 let isIt3Repetition=0;
 
 let piscevaluesForPostion={
-    100: 100,
-    "wr": 3900,
-    "wn": 17143,
-    "wb": 43789,
-    "wq": 87324,
-    "wk": 129212,
-    "wp": 153892,
-    "br": 182345,
-    "bn": 233213,
-    "bb": 272131,
-    "bq": 323123,
-    "bk": 363543,
-    "bp": 392131,
+    "wr": 10965530,
+    "wn": 3896351,
+    "wb": 1315602,
+    "wq": 220151,
+    "wk": 9688038,
+    "wp": 2266642,
+    "br": 3264620,
+    "bn": 7801796,
+    "bb": 5374032,
+    "bq": 437326,
+    "bk": 859005,
+    "bp": 686067,
 }
 
-//just to generate random values so we can check prevposition
-function addPosition(){
-    isIt3Repetition=0;
-    valueToAdd=0;
-    repetition=false;
+let squerenums={}
 
-    for(let i=files.file_1;i<files.file_8+1;i++){
-        for(let j=ranks.rank_1;j<ranks.rank_8+1;j++){
-            let indexOnboard=indexOnJsBoard([i,j])
-            valueToAdd=valueToAdd+(piscevaluesForPostion[board[indexOnboard]]*(i*7)*(j*16))
-        }
+//zobrist hashing
+function addPosition(listTOadd){
+    let wnum=211341243;
+    let bnum=2342343242;
+    piscesTracker["w"].forEach(elem=>{
+        wnum = squerenums[elem]^piscevaluesForPostion[board[elem]]
+    })
+
+    piscesTracker["b"].forEach(elem=>{
+        bnum = squerenums[elem]^piscevaluesForPostion[board[elem]]
+    })
+
+    listTOadd.push(wnum^bnum)
+}
+
+
+
+function randomNumsToEachSquere(){
+    for(let i=21;i<99;i++){
+        squerenums[i]=Math.floor(i*(Math.random()*1000))
     }
+}
 
-    prevposition.forEach(elem=>{
-        if(elem==valueToAdd){
+
+function checkRepetition(){
+    isIt3Repetition=0;
+    let elementToCheck=prevposition[prevposition.length-1];
+
+    prevposition.forEach(position=>{
+        if(elementToCheck==position){
             isIt3Repetition++
         }
     })
+    
 
-    if(isIt3Repetition == 2){
-        repetition=true
-    }
-    prevposition.push(valueToAdd)
+    if(isIt3Repetition>=3){
+        document.querySelector('.result').textContent="draw"
+        document.querySelector('.result').style.color="brawn"
+        document.querySelector(".win").classList.add("show")
 
-    if(prevposition.length==20){
-        prevposition=[]
+        setTimeout(function(){
+            document.querySelector('.win').classList.remove("show")
+        },700)
+        drawpoint++
+        document.querySelector(".draws").textContent=drawpoint
     }
 }
+
+
 
 
 function enoughpisces(){
@@ -283,7 +311,14 @@ function enoughpisces(){
                             }   
                             })
         if(enoughpisce&&piscesTracker["w"].length<3&&piscesTracker["b"].length<3){
-            document.querySelector(".draw").classList.add("show")
+            document.querySelector('.result').textContent="draw"
+            document.querySelector('.result').style.color="brawn"
+            document.querySelector(".win").classList.add("show")
+            setTimeout(function(){
+                document.querySelector('.win').classList.remove("show")
+            },700)
+            drawpoint++
+            document.querySelector(".draws").textContent=drawpoint
         }                    
     }
 }
@@ -292,7 +327,14 @@ function enoughpisces(){
 function addPlayedmove(){
     fiftymove++
     if(fiftymove==100){
-        document.querySelector(".draw").classList.add("show")
+        document.querySelector('.result').textContent="draw"
+        document.querySelector('.result').style.color="brawn"
+        document.querySelector(".win").classList.add("show")
+        setTimeout(function(){
+            document.querySelector('.win').classList.remove("show")
+        },700)
+        drawpoint++
+        document.querySelector(".draws").textContent=drawpoint
     }
 }
 
